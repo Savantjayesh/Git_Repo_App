@@ -9,10 +9,8 @@ const GitHubRepositories = () => {
   const getRepositories = () => {
     const apiUrl = `https://api.github.com/users/${username}/repos?per_page=${perPage}`;
 
-    // Show loader
     setLoading(true);
 
-    // Make API call
     fetch(apiUrl)
       .then(response => {
         if (!response.ok) {
@@ -21,29 +19,21 @@ const GitHubRepositories = () => {
         return response.json();
       })
       .then(repositories => {
-        // Hide loader
         setLoading(false);
 
-        // Display user profile
         displayProfile(username);
 
-        // Check if the response is an array before calling map
         if (Array.isArray(repositories)) {
-          // Display repositories
           setRepositories(repositories);
 
-          // Display pagination
           displayPagination(repositories.length, perPage);
         } else {
-          // Handle the case where the response is not an array
           setRepositories([]);
         }
       })
       .catch(error => {
-        // Hide loader
         setLoading(false);
 
-        // Display error message
         setRepositories([]);
         console.error('Error fetching repositories:', error);
       });
@@ -55,50 +45,52 @@ const GitHubRepositories = () => {
     }
   }, [username, perPage]);
 
-  const displayRepositories = () => {
-    if (repositories.length === 0) {
-      return <p>No repositories found.</p>;
-    }
+ const displayRepositories = () => {
+  if (repositories.length === 0) {
+    return <p>No repositories found.</p>;
+  }
 
-    // Assuming that the first repository in the list represents the user's profile
-    const userProfile = repositories[0];
+  const userProfile = repositories[0];
 
-    return (
-      <div className="container">
-        <div className="text-center mt-4" style={{ padding: '50px' }}>
-          <img
-            src={userProfile.owner.avatar_url}
-            alt={`${userProfile.owner.login}'s Avatar`}
-            className="rounded-circle"
-            style={{ width: '100px', height: '100px' }}
-          />
-          <h4 className="mt-3">{userProfile.owner.login}</h4>
-          <p className="text-muted">
-            <a href={userProfile.owner.html_url} target="_blank" rel="noopener noreferrer">
-              GitHub Profile
-            </a>
-          </p>
-        </div>
-
-        <div className="row mt-5">
-          {repositories.slice(0).map(repo => (
-            <div key={repo.id} className="card col-md-3 mb-4 px-3">
+  return (
+    <div className="container">
+      <div className="text-center mt-4" style={{ padding: '50px' }}>
+        <img
+          src={userProfile.owner.avatar_url}
+          alt={`${userProfile.owner.login}'s Avatar`}
+          className="rounded-circle" // Apply the 'rounded-circle' class
+          style={{ width: '100px', height: '100px', borderRadius: '50%' }} // Set borderRadius to create a circular shape
+        />
+        <h4 className="mt-3">{userProfile.owner.login}</h4>
+        <p className="text-muted">
+          <a href={userProfile.owner.html_url} target="_blank" rel="noopener noreferrer">
+            GitHub Profile
+          </a>
+        </p>
+      </div>
+  
+      <div className="row mt-5">
+        {repositories.map(repo => (
+          <div key={repo.id} className="col-md-6">
+            <div className="card mb-4 px-3" style={{ border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
               <div className="card-body">
                 <h5 className="card-title">{repo.name}</h5>
                 <p className="card-text">{repo.description || 'No description available'}</p>
-
+  
                 {repo.language && (
                   <p>
-                    <strong>Language:</strong> <span className="btn btn-primary">{repo.language}</span>
+                    <strong>Language:</strong> <span className="btn btn-primary" style={{ border: '1px solid black',padding:'5px', borderRadius: '5px'}}>{repo.language}</span>
                   </p>
                 )}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    );
-  };
+    </div>
+  );
+};
+
 
   const displayProfile = (username) => {
     
